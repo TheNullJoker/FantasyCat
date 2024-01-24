@@ -46,14 +46,14 @@
         // Add click event listeners to the buttons
         document.getElementById('shatteredDreamsButton').addEventListener('click', function() {
             sendApiRequest('159');
-            fetch("http://127.0.0.1:9282/luar?button=" + shatteredDreamsButton, {
+            fetch("http://127.0.0.1:9282/luar?button=shatteredDreamsButton", {
                 method: "GET" // default, so we can ignore
             })
         });
 
         document.getElementById('catsUniverseButton').addEventListener('click', function() {
             sendApiRequest('150');
-            fetch("http://127.0.0.1:9282/luar?button=" + catsUniverseButton, {
+            fetch("http://127.0.0.1:9282/luar?button=catsUniverseButton", {
                 method: "GET" // default, so we can ignore
             })
             
@@ -61,7 +61,7 @@
 
         document.getElementById('lucidTermButton').addEventListener('click', function() {
             sendApiRequest('242');
-            fetch("http://127.0.0.1:9282/luar?button=" + catsUniverseButton, {
+            fetch("http://127.0.0.1:9282/luar?button=lucidTermButton", {
                 method: "GET" // default, so we can ignore
             })
         });
