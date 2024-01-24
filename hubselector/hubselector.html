@@ -1,190 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="https://constelia.ai/fc2.js"></script>
+--[[
+    @title
+        Hub launcher
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Buttons</title>
+    @author
+        TheNoobJoker
 
-    <style>
-        body {
-            background-color: #222;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            color: white;
-        }
+    @description
+        Lets u choose from a hub when launching an FC2 solution.
+--]]
+local modules = require("modules")
+local json = require("json")
 
-        button {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
 
-    <button id="shatteredDreamsButton">Shattered Dreams</button>
-    <button id="catsUniverseButton">Cats Universe</button>
-    <button id="lucidTermButton">Lucid Term</button>
+local hubLauncher = {
 
-    
-    <script>
-        const fantasy = new FC2( );
-        // Function to send the API request
-        function sendApiRequest(scriptId) {
-            console.log(`Sending API request for script ID ${scriptId}`);
-        }
+    auto_update = true,
 
-        // Add click event listeners to the buttons
-        document.getElementById('shatteredDreamsButton').addEventListener('click', function() {
-            sendApiRequest('159');
-            let script = (`
-            local modules = require("modules")
-            local json = require("json")
-            local activeScripts = json.decode(modules.session:api("getMember&scripts"))
+    auto_open= true,
+}
 
-            local scriptIds = {}
+local activeScripts = json.decode(modules.session:api("getMember&scripts"))
 
-            -- Extract active scriptIDs.
-            for _, script in pairs(activeScripts.scripts) do
-                table.insert(ScriptIds, script.id)
-            end
+local scriptIds = {}
 
-            -- Initialize flags as false.
-            local ShatteredDreamsIsEnabled = false
-            local CatsUniverseIsEnabled = false
-            local LucidTermIsEnabled = false
+-- Extract active scriptIDs.
+for _, script in pairs(activeScripts.scripts) do
+    table.insert(ScriptIds, script.id)
+end
 
-            -- Check if any hub is already enabled.
-            for _, targetId in pairs(hubLauncher.scriptIds) do
-                if id == "159" then
-                    ShatteredDreamsIsEnabled = true
-                elseif id == "150" then
-                    CatsUniverseIsEnabled = true
-                elseif id == "242" then
-                    LucidTermIsEnabled = true
+-- Initialize flags as false.
+local ShatteredDreamsIsEnabled = false
+local CatsUniverseIsEnabled = false
+local LucidTermIsEnabled = false
 
-                end
-            end
+-- Check if any hub is already enabled.
+for _, targetId in pairs(hubLauncher.scriptIds) do
+    if id == "159" then
+        ShatteredDreamsIsEnabled = true
+    elseif id == "150" then
+        CatsUniverseIsEnabled = true
+    elseif id == "242" then
+        LucidTermIsEnabled = true
+    end
+end
 
-            if CatsUniverseIsEnabled then
-                modules.session:api("toggleScriptStatus&id=150")
+function hubLauncher.on_loaded()
 
-            elseif LucidTermIsEnabled then
-                modules.session:api("toggleScriptStatus&id=242")
+
+    if hubLauncher.auto_update then
+        local target_directory = fantasy.fmt("{}/constellation4/resources/hubSelector.html", modules.file:current_directory())
+
+        target_directory = modules.file:fix_separators(target_directory)
+
+        modules.http:to_file("https://raw.githubusercontent.com/TheNullJoker/FantasyCat/main/hubselector/hubselector.html", target_directory)
+
+        fantasy.log("hubSelector.html downloaded to {}", target_directory)
+
+        if hubLauncher.auto_open then
+            modules.http:open(target_directory)
+        end
+      
+    end
+
+end
+
+function hubLauncher.on_http_request( data )
+    if data["script"] ~= "HubLauncer.lua" then return end
+
+    if data["path"] ~= "/luar" then return end
+
+    if data["params"]["button"] == "shatteredDreamsButton" then
+        if CatsUniverseIsEnabled then
+            modules.session:api("toggleScriptStatus&id=150")
+
+        elseif LucidTermIsEnabled then
+            modules.session:api("toggleScriptStatus&id=242")
+        
+        elseif not ShatteredDreamsIsEnabled then
+            modules.session:api("toggleScriptStatus&id=159")
+        end
+        fantasy.log({}, "shaterredDreams Enabled")
+        fantasy.scripts:reset( true )
+
+    elseif data["params"]["button"] == "catsUniverseButton" then
+        if SchatteredDreamsIsEnabled then 
+            modules.session:api("toggleScriptStatus&id=159")  
+
+        elseif LucidTermIsEnabled then
+            modules.session:api("toggleScriptStatus&id=242")
+
+        elseif not CatsUniverseIsEnabled then
+            modules.session:api("toggleScriptStatus&id=150")
+        end
+        fantasy.log({}, "CatsUniverse Enabled")
+        fantasy.scripts:reset( true )
+
+    elseif data["params"]["button"] == "lucidTermButton" then 
+        if SchatteredDreamsIsEnabled then 
+            modules.session:api("toggleScriptStatus&id=159")
+
+        elseif CatsUniverseIsEnabled then
+            modules.session:api("toggleScriptStatus&id=150")
             
-            elseif not ShatteredDreamsIsEnabled then
-                modules.session:api("toggleScriptStatus&id=159")
-            end
-            fantasy.log("TEST")
-            fantasy.scripts:reset( true )
-            `);
-            fantasy.run("EnableShatteredDreams.lua", script);
-        });
+        elseif not LucidTermIsEnabled then
+            modules.session:api("toggleScriptStatus&id=242")
 
-        document.getElementById('catsUniverseButton').addEventListener('click', function() {
-            sendApiRequest('150');
-            let script = (`
-            local modules = require("modules")
-            local json = require("json")
-            local activeScripts = json.decode(modules.session:api("getMember&scripts"))
+        end
+        fantasy.log({}, "LucidTerm enabled")
+        fantasy.scripts:reset( true )
+    end
 
-            local scriptIds = {}
 
-            -- Extract active scriptIDs.
-            for _, script in pairs(activeScripts.scripts) do
-                table.insert(ScriptIds, script.id)
-            end
-
-            -- Initialize flags as false.
-            local ShatteredDreamsIsEnabled = false
-            local CatsUniverseIsEnabled = false
-            local LucidTermIsEnabled = false
-
-            -- Check if any hub is already enabled.
-            for _, targetId in pairs(hubLauncher.scriptIds) do
-                if id == "159" then
-                    ShatteredDreamsIsEnabled = true
-                elseif id == "150" then
-                    CatsUniverseIsEnabled = true
-                elseif id == "242" then
-                    LucidTermIsEnabled = true
-
-                end
-            end
-
-            if SchatteredDreamsIsEnabled then 
-                modules.session:api("toggleScriptStatus&id=159")  
-
-            elseif LucidTermIsEnabled then
-                modules.session:api("toggleScriptStatus&id=242")
-
-            elseif not CatsUniverseIsEnabled then
-                modules.session:api("toggleScriptStatus&id=150")
-            end
-            fantasy.log("TEST")
-            fantasy.scripts:reset( true )
-            `);
-            fantasy.run("EnableCatsUniverse.lua", script);
-        });
-
-        document.getElementById('lucidTermButton').addEventListener('click', function() {
-            sendApiRequest('242');
-            let script = (`
-            local modules = require("modules")
-            local json = require("json")
-            local activeScripts = json.decode(modules.session:api("getMember&scripts"))
-
-            local scriptIds = {}
-
-            -- Extract active scriptIDs.
-            for _, script in pairs(activeScripts.scripts) do
-                table.insert(ScriptIds, script.id)
-            end
-
-            -- Initialize flags as false.
-            local ShatteredDreamsIsEnabled = false
-            local CatsUniverseIsEnabled = false
-            local LucidTermIsEnabled = false
-
-            -- Check if any hub is already enabled.
-            for _, targetId in pairs(hubLauncher.scriptIds) do
-                if id == "159" then
-                    ShatteredDreamsIsEnabled = true
-                elseif id == "150" then
-                    CatsUniverseIsEnabled = true
-                elseif id == "242" then
-                    LucidTermIsEnabled = true
-
-                end
-            end
-
-            if SchatteredDreamsIsEnabled then 
-                modules.session:api("toggleScriptStatus&id=159")
-
-            elseif CatsUniverseIsEnabled then
-                modules.session:api("toggleScriptStatus&id=150")
-                
-            elseif not LucidTermIsEnabled then
-                modules.session:api("toggleScriptStatus&id=242")
-
-            end
-            fantasy.log("TEST")
-            fantasy.scripts:reset( true )
-            `);
-            fantasy.run("EnableLucidTerm.lua", script);
-        });
-    </script>
-
-</body>
-</html>
+return hubLauncher
