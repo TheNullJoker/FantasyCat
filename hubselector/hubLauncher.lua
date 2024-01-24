@@ -11,15 +11,12 @@
 local modules = require("modules")
 local json = require("json")
 
-
 local hubLauncher = {
 
     auto_update = false,
 
     auto_open= true,
 }
-
-
 
 function hubLauncher.on_loaded()
 
@@ -28,7 +25,6 @@ function hubLauncher.on_loaded()
         target_directory = modules.file:fix_separators(target_directory)
 
     if hubLauncher.auto_update then
-
 
         modules.http:to_file("https://raw.githubusercontent.com/TheNullJoker/FantasyCat/main/hubselector/hubLauncher.html", target_directory)
 
@@ -44,8 +40,6 @@ end
 
 function hubLauncher.on_http_request( data )
     if data["script"] ~= "hubLauncher.lua" or data["path"] ~= "/luar" then return end
-
-
 
     local activeScripts = modules.scripts:get_loaded(false)
 
