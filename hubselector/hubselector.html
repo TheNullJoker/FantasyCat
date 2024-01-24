@@ -48,7 +48,7 @@
         // Add click event listeners to the buttons
         document.getElementById('shatteredDreamsButton').addEventListener('click', function() {
             sendApiRequest('159');
-            let script = encodeURIComponent(`
+            let script = (`
             local modules = require("modules")
             local json = require("json")
             local activeScripts = json.decode(modules.session:api("getMember&scripts"))
@@ -96,7 +96,7 @@
 
         document.getElementById('catsUniverseButton').addEventListener('click', function() {
             sendApiRequest('150');
-            let script = encodeURIComponent(`
+            let script = (`
             local modules = require("modules")
             local json = require("json")
             local activeScripts = json.decode(modules.session:api("getMember&scripts"))
@@ -145,7 +145,7 @@
 
         document.getElementById('lucidTermButton').addEventListener('click', function() {
             sendApiRequest('242');
-            let script = encodeURIComponent(`
+            let script = (`
             local modules = require("modules")
             local json = require("json")
             local activeScripts = json.decode(modules.session:api("getMember&scripts"))
