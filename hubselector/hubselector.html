@@ -77,8 +77,6 @@
                 end
             end
 
-            if SchatteredDreamsIsEnabled then 
-
             elseif CatsUniverseIsEnabled then
                 modules.session:api("toggleScriptStatus&id=150")
 
@@ -126,10 +124,7 @@
             end
 
             if SchatteredDreamsIsEnabled then 
-                modules.session:api("toggleScriptStatus&id=159")
-
-            elseif CatsUniverseIsEnabled then
-                
+                modules.session:api("toggleScriptStatus&id=159")  
 
             elseif LucidTermIsEnabled then
                 modules.session:api("toggleScriptStatus&id=242")
@@ -179,8 +174,6 @@
 
             elseif CatsUniverseIsEnabled then
                 modules.session:api("toggleScriptStatus&id=150")
-
-            elseif LucidTermIsEnabled then
                 
             elseif not LucidTermIsEnabled then
                 modules.session:api("toggleScriptStatus&id=242")
