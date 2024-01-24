@@ -1,71 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+--[[
+    @title
+        Hub launcher
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Buttons</title>
+    @author
+        TheNoobJoker
 
-    <style>
-        body {
-            background-color: #222;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            color: white;
-        }
+    @description
+        Lets u choose from a hub when launching an FC2 solution.
+--]]
+local modules = require("modules")
+local json = require("json")
 
-        button {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
 
-    <button id="shatteredDreamsButton">Shattered Dreams</button>
-    <button id="catsUniverseButton">Cats Universe</button>
-    <button id="lucidTermButton">Lucid Term</button>
+local hubLauncher = {
 
-    
-    <script>
-        // Function to send the API request
-        function sendApiRequest(scriptId) {
-            console.log(`Sending API request for script ID ${scriptId}`);
-        }
+    auto_update = false,
 
-        // Add click event listeners to the buttons
-        document.getElementById('shatteredDreamsButton').addEventListener('click', function() {
-            sendApiRequest('159');
-            fetch("http://127.0.0.1:9282/luar?no_debug&button=shatteredDreamsButton", {
-                method: "GET" // default, so we can ignore
-            })
-        });
+    auto_open= true,
+}
 
-        document.getElementById('catsUniverseButton').addEventListener('click', function() {
-            sendApiRequest('150');
-            fetch("http://127.0.0.1:9282/luar?no_debug&button=catsUniverseButton", {
-                method: "GET" // default, so we can ignore
-            })
-            
-        });
 
-        document.getElementById('lucidTermButton').addEventListener('click', function() {
-            sendApiRequest('242');
-            fetch("http://127.0.0.1:9282/luar?no_debug&button=lucidTermButton", {
-                method: "GET" // default, so we can ignore
-            })
-        });
-    </script>
 
-</body>
-</html>
+function hubLauncher.on_loaded()
+
+    local target_directory = fantasy.fmt("{}/constellation4/resources/hubLauncher.html", modules.file:current_directory())
+
+        target_directory = modules.file:fix_separators(target_directory)
+
+    if hubLauncher.auto_update then
+
+
+        modules.http:to_file("https://raw.githubusercontent.com/TheNullJoker/FantasyCat/main/hubselector/hubLauncher.html", target_directory)
+
+        fantasy.log("hubLauncher.html downloaded to {}", target_directory)
+
+    end
+
+    if hubLauncher.auto_open then
+        modules.http:open(target_directory)
+    end
+
+end
+
+function hubLauncher.on_http_request( data )
+    if data["script"] ~= "hubLauncher.lua" or data["path"] ~= "/luar" then return end
+
+
+
+    local activeScripts = modules.scripts:get_loaded(false)
+
+    -- Initialize flags as false.
+    local scriptFlags = {
+        ShatteredDreams = false,
+        CatsUniverse = false,
+        LucidTerm = false
+    }
+
+    -- Extract active scriptIDs.
+    for _, script in pairs(activeScripts) do
+        --fantasy.log(script.name)
+        if script.name == "shattered_dreams.lua" then
+            --fantasy.log("shattered_dreams.lua is enabled")
+            ShatteredDreamsIsEnabled = true
+         elseif script.name == "cats_universe.lua" then
+            --fantasy.log("catus_universe.lua is enabled")
+         CatsUniverseIsEnabled = true
+         elseif script.name == "lucid_term.lua" then
+            --fantasy.log("lucid_term.lua is enabled")
+             LucidTermIsEnabled = true
+         end
+
+    end
+
+    if CatsUniverseIsEnabled then
+        fantasy.session:api("toggleScriptStatus&id=150")
+
+    elseif LucidTermIsEnabled then
+        fantasy.session:api("toggleScriptStatus&id=242")
+
+    elseif ShatteredDreamsIsEnabled then
+        fantasy.session:api("toggleScriptStatus&id=159")
+    end
+
+    local function toggleScriptStatus(scriptID)
+        fantasy.session:api("toggleScriptStatus&id=" .. scriptID)
+    end
+
+    local buttons = {
+        shatteredDreamsButton = 159,
+        catsUniverseButton = 150,
+        lucidTermButton = 242
+    }
+
+    local button = data["params"]["button"]
+    local selectedButton = buttons[button]
+
+    if selectedButton then
+        toggleScriptStatus(selectedButton)
+        fantasy.log("{}", button .. " Enabled")
+        modules.scripts:reset( true )
+    end
+
+end
+
+return hubLauncher
