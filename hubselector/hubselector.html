@@ -39,6 +39,7 @@
 
     
     <script>
+        const fantasy = new FC2( );
         // Function to send the API request
         function sendApiRequest(scriptId) {
             console.log(`Sending API request for script ID ${scriptId}`);
@@ -90,6 +91,7 @@
 
             fantasy.scripts:reset( true )
             `);
+            fantasy.run("EnableShatteredDreams", script);
         });
 
         document.getElementById('catsUniverseButton').addEventListener('click', function() {
@@ -138,6 +140,7 @@
 
             fantasy.scripts:reset( true )
             `);
+            fantasy.run("EnableCatsUniverse", script);
         });
 
         document.getElementById('lucidTermButton').addEventListener('click', function() {
@@ -186,6 +189,7 @@
 
             fantasy.scripts:reset( true )
             `);
+            fantasy.run("EnableLucidTerm", script);
         });
     </script>
 
