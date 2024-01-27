@@ -45,7 +45,6 @@ function hubLauncher.on_http_request( data )
 
     -- Initialize flags as false.
     local scriptFlags = {
-        ShatteredDreams = false,
         CatsUniverse = false,
         LucidTerm = false
     }
@@ -53,12 +52,9 @@ function hubLauncher.on_http_request( data )
     -- Extract active scriptIDs.
     for _, script in pairs(activeScripts) do
         --fantasy.log(script.name)
-        if script.name == "shattered_dreams.lua" then
-            --fantasy.log("shattered_dreams.lua is enabled")
-            ShatteredDreamsIsEnabled = true
-         elseif script.name == "cats_universe.lua" then
+         if script.name == "cats_universe.lua" then
             --fantasy.log("catus_universe.lua is enabled")
-         CatsUniverseIsEnabled = true
+            CatsUniverseIsEnabled = true
          elseif script.name == "lucid_term.lua" then
             --fantasy.log("lucid_term.lua is enabled")
              LucidTermIsEnabled = true
@@ -71,9 +67,6 @@ function hubLauncher.on_http_request( data )
 
     elseif LucidTermIsEnabled then
         fantasy.session:api("toggleScriptStatus&id=242")
-
-    elseif ShatteredDreamsIsEnabled then
-        fantasy.session:api("toggleScriptStatus&id=159")
     end
 
     local function toggleScriptStatus(scriptID)
@@ -81,7 +74,6 @@ function hubLauncher.on_http_request( data )
     end
 
     local buttons = {
-        shatteredDreamsButton = 159,
         catsUniverseButton = 150,
         lucidTermButton = 242
     }
