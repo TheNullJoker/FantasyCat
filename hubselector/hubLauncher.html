@@ -32,7 +32,6 @@
 </head>
 <body>
 
-    <button id="shatteredDreamsButton">Shattered Dreams</button>
     <button id="catsUniverseButton">Cats Universe</button>
     <button id="lucidTermButton">Lucid Term</button>
 
@@ -42,14 +41,6 @@
         function sendApiRequest(scriptId) {
             console.log(`Sending API request for script ID ${scriptId}`);
         }
-
-        // Add click event listeners to the buttons
-        document.getElementById('shatteredDreamsButton').addEventListener('click', function() {
-            sendApiRequest('159');
-            fetch("http://127.0.0.1:9282/luar?no_debug&button=shatteredDreamsButton", {
-                method: "GET" // default, so we can ignore
-            })
-        });
 
         document.getElementById('catsUniverseButton').addEventListener('click', function() {
             sendApiRequest('150');
