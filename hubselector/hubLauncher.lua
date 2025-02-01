@@ -3,7 +3,7 @@
         Hub launcher
 
     @author
-        TheNoobJoker
+        arleas
 
     @description
         Lets u choose from a hub when launching an FC2 solution.
